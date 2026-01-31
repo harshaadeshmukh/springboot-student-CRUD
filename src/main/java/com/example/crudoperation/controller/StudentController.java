@@ -56,13 +56,6 @@ public class StudentController {
     @Transactional
     public String updateStudent(@RequestBody StudentData s, @PathVariable int id)
     {
-        //        StudentData old = studentRepository.findById(id)
-//                .orElseThrow(()-> new RuntimeException("Student data not found"));
-//
-//        old.setName(s.getName());
-//
-//        return studentRepository.save(old);
-
         List<StudentData> list = studentRepository.findAll();
 
         for (StudentData s1 : list) {
