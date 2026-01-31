@@ -1,0 +1,67 @@
+@RestController
+public class Controller {
+
+    @Autowired
+    StudentRepository studentRepository;
+
+    @GetMapping("/")
+    public List<Student> getStudent() {
+        return studentRepository.findAll();
+    }
+
+    @GetMapping("/getStudentById/{id}")
+    public String getStudentById(@PathVariable int id) {
+        for(Student s : studentRepository.findAll()) {
+            if(s.getStudentId() == id) {
+                return s.getStudentName() + " " + s.getStudentId();
+            }
+        }
+        throw new StudentException("Student Data not found");
+    }
+
+    @PostMapping("/addStudent")
+    public String addStudent(@RequestBody Student s) {
+
+        for(Student student1 : studentRepository.findAll()) {
+            if(s.getStudentId() == student1.getStudentId()) {
+                return "student ID exists use Another ID";
+            }
+        }
+
+        studentRepository.save(s);
+        return "Student data added";
+    }
+
+    @DeleteMapping("/delStudent/{id}")
+    public String delStudent(@PathVariable int id) {
+
+        List<Student> students = studentRepository.findAll();
+        Iterator<Student> it = students.iterator();
+
+        while(it.hasNext()) {
+            Student s1 = it.next();
+            if(s1.getStudentId() == id) {
+                studentRepository.delete(s1);
+                return "Student " + id + " deleted successfully";
+            }
+        }
+        throw new StudentException("Student with id " + id + " not found");
+    }
+
+    @PatchMapping("/updateStudent/{id}")
+    public String updateStudent(@RequestBody Student s2, @PathVariable int id) {
+
+        List<Student> students = studentRepository.findAll();
+        Iterator<Student> it = students.iterator();
+
+        while(it.hasNext()) {
+            Student s1 = it.next();
+            if(s1.getStudentId() == id) {
+                s1.setStudentName(s2.getStudentName());
+                studentRepository.save(s1);
+                return "Student ID "+id +" has been updated";
+            }
+        }
+        throw new StudentException("Student ID not found");
+    }
+}
