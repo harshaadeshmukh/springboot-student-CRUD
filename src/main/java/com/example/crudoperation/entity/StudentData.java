@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "student")
 public class StudentData {
     @Id
-
     private int id;
 
     private String name;
@@ -34,6 +33,6 @@ public class StudentData {
     }
 
     public void setName(String name) {
-        name = name;
+        this.name = name;
     }
 }

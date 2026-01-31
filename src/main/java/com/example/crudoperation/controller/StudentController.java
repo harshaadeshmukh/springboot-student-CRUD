@@ -3,6 +3,7 @@ package com.example.crudoperation.controller;
 import com.example.crudoperation.entity.StudentData;
 import com.example.crudoperation.exception.ResourceNotFound;
 import com.example.crudoperation.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,10 +51,12 @@ public class StudentController {
         return "Student Data Added";
     }
 
+//    We can apply both logic PatchMapping as per below
     @PatchMapping("/updateStudent/{id}")
-    public String  updateStudent(@RequestBody StudentData s , @PathVariable int id)
+    @Transactional
+    public String updateStudent(@RequestBody StudentData s, @PathVariable int id)
     {
-//        StudentData old = studentRepository.findById(id)
+        //        StudentData old = studentRepository.findById(id)
 //                .orElseThrow(()-> new RuntimeException("Student data not found"));
 //
 //        old.setName(s.getName());
@@ -61,23 +64,29 @@ public class StudentController {
 //        return studentRepository.save(old);
 
         List<StudentData> list = studentRepository.findAll();
-        Iterator<StudentData> it = list.iterator();
 
-        while(it.hasNext())
-        {
-            StudentData s1 = it.next();
-            if(s1.getId() == id)
-            {
+        for (StudentData s1 : list) {
+            if (s1.getId() == id) {
                 s1.setName(s.getName());
-                studentRepository.save(s1);
-
-                return  "Student ID " + id + " has been updated";
+                return "Student ID " + id + " has been updated";
             }
         }
-
         throw new ResourceNotFound("Student ID not found");
-
     }
+
+
+//    @PatchMapping("/updateStudent/{id}")
+//    @Transactional
+//    public String updateStudent(@RequestBody StudentData s, @PathVariable int id) {
+//
+//        StudentData old = studentRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFound("Student data not found"));
+//
+//        old.setName(s.getName());
+//
+//        return "Student ID " + id + " has been updated";
+//    }
+
 
     @DeleteMapping("/delStudent/{id}")
     public String DeleteStudent(@PathVariable int id)
